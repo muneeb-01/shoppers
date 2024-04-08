@@ -5,6 +5,7 @@ import { LuCloudLightning, LuMinus, LuPlus } from "react-icons/lu";
 import { bagItemsAction } from "../Store/BagItemsSlice";
 import { useNavigate } from "react-router-dom";
 import { OrderHistoryAction } from "../Store/OrderHistorySlice";
+import { toast } from "react-toastify";
 function Cart() {
   const navigate = useNavigate();
   const bagItems = useSelector((store) => store.bagItems);
@@ -18,6 +19,19 @@ function Cart() {
     return acc + quantity * price;
   }, 0);
   const handleCheckOut = async () => {
+    if (!userId) {
+      toast.error("Login to your accont!", {
+        position: "top-center",
+        autoClose: 1500,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
+      setTimeout(() => {
+        window.location.replace("/login");
+      }, 1500);
+      return;
+    }
     let checkoutInfo = {};
     const userInfo = userInformation.info;
     let cartTotal =
@@ -49,6 +63,13 @@ function Cart() {
           dispatch(OrderHistoryAction.loadHistory(data.orderHistory.reverse()));
           dispatch(bagItemsAction.initialCart(data.cart));
         });
+      toast.success("Order has been placed!", {
+        position: "top-center",
+        autoClose: 1500,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
     }
   };
 

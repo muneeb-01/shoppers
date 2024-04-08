@@ -1,5 +1,7 @@
 import React from "react";
 import { useState } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 function Login({ setCurrent }) {
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,7 +26,14 @@ function Login({ setCurrent }) {
       formdata = "";
       window.location.replace("/user");
     } else {
-      alert(responceData.errors);
+      toast.error("Invalid username or password!", {
+        position: "top-center",
+        autoClose: 1500,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
+      return;
     }
   };
 

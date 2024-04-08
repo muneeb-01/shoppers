@@ -8,7 +8,6 @@ const localStrategy = require("passport-local");
 passport.use(new localStrategy(userModel.authenticate()));
 const jwt = require("jsonwebtoken");
 const orderModel = require("./Orders");
-const Orders = require("./Orders");
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
@@ -115,7 +114,13 @@ router.post("/cartItems", async (req, res) => {
   try {
     const user = await userModel
       .findById(req.body.userId)
-      .populate("cart.item");
+      .populate("cart.item")
+      .populate("orderHistory.order")
+      .populate({
+        path: "orderHistory.order",
+        populate: { path: "items.item" },
+      });
+
     res.send({ cartItem: user.cart, orderHistory: user.orderHistory });
   } catch (error) {
     console.error(error);
@@ -350,12 +355,20 @@ router.post("/addNewOrder", async (req, res) => {
     total: total,
   });
   user.cart = [];
-  user.orderHistory.push({ items, total, status: addOrder.orderStatus });
+  user.orderHistory.push({ order: addOrder.id });
   await user.save();
+  const userOrder = await userModel
+    .findById(userId)
+    .populate("orderHistory.order")
+    .populate({
+      path: "orderHistory.order",
+      populate: { path: "items.item" },
+    });
+
   res.send({
     success: true,
     cart: user.cart,
-    orderHistory: user.orderHistory,
+    orderHistory: userOrder.orderHistory,
   });
 });
 

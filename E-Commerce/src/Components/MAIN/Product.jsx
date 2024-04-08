@@ -3,10 +3,17 @@ import { PiShoppingCartSimple } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
 import { bagItemsAction } from "../../Store/BagItemsSlice";
 import { Link } from "react-router-dom";
-
+import { toast } from "react-toastify";
 function Product({ item }) {
   const dispatch = useDispatch();
   const handleAddToBag = async (item) => {
+    toast.success("added successfully!", {
+      position: "top-center",
+      autoClose: 1500,
+      pauseOnHover: false,
+      draggable: true,
+      theme: "dark",
+    });
     dispatch(bagItemsAction.addbagItems({ item, quantity: 1 }));
     const userId = localStorage.getItem("userId");
     const productId = item._id;

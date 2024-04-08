@@ -64,13 +64,11 @@ const UserModel = mongoose.Schema({
   orderHistory: {
     type: [
       {
-        items: Array,
         date: {
           type: String,
           default: new Date().toLocaleDateString().split("/").join("/"),
         },
-        total: String,
-        status: String,
+        order: { type: mongoose.Schema.Types.ObjectId, ref: "order" },
       },
     ],
     default: [],

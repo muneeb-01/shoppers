@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { userInformationAction } from "../../Store/userInformationSlice";
+import { toast } from "react-toastify";
 function UserSetting() {
   const [profile, setprofile] = useState(null);
   const dispatch = useDispatch();
@@ -18,7 +19,16 @@ function UserSetting() {
     let imgUrl;
     let profiledata = new FormData();
     profiledata.append("profile", profile);
-
+    if (!profile) {
+      toast.error("select profile to proceed!", {
+        position: "top-center",
+        autoClose: 1500,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
+      return;
+    }
     await fetch(`http://localhost:3000/uploadProfile`, {
       method: "post",
       headers: {
@@ -47,6 +57,14 @@ function UserSetting() {
           dispatch(userInformationAction.addInitialInformation(data.userInfo));
         });
       window.location.replace("/user");
+    } else {
+      toast.error("something went wrong!", {
+        position: "top-center",
+        autoClose: 1500,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+      });
     }
   };
   return (
